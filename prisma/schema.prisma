@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  password      String
+  name          String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  people        Person[]
+  dateEntries   DateEntry[]
+  storyEntries  StoryEntry[]
+}
+
+model Person {
+  id           String       @id @default(cuid())
+  name         String
+  nickname     String?
+  height       Int?
+  birthday     String?
+  occupation   String?
+  contact      String?
+  color        String       @default("#FF6B9D")
+  tags         String[]
+  sparkRating  Int          @default(3)
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateEntries  DateEntry[]
+  storyEntries StoryEntry[]
+}
+
+model DateEntry {
+  id        String   @id @default(cuid())
+  date      String
+  time      String?
+  location  String?
+  mood      String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  personId  String
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StoryEntry {
+  id        String   @id @default(cuid())
+  content   String
+  date      String
+  moodTag   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  personId  String
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
